@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>贪吃蛇</title>
+	<style type="text/css">
+		*{
+			margin: 0px;
+			padding: 0px;
+		}
+		#canvas{
+			display: block;
+			background: cyan;
+			margin: 100px auto 0;
+			border: 1px solid;
+
+		}
+	</style>
+</head>
+<body>
+最高得分:<div id="box"></div>
+	<canvas id="canvas" width="500" height="500"></canvas>
+</body>
+<script type="text/javascript">
+	var canvas=document.getElementById('canvas');
+	var box=document.getElementById('box');
+	var ctx=canvas.getContext("2d");
+	var co=40;//表示前进的方向
+	var eat=null;//表示食物
+	var stop=false;
+	var r=[{x:10,y:9},{x:10,y:8}];//表示初始位置
+	ctx.shadowBlur=20;
+	ctx.shadowColor="black";
+
+	function onframe(){
+		if(r[0].x<0||r[0].x>=50||r[0].y<0||r[0].y>=50){
+			return;
+			// onframe();
+		}
+		// 如果有实物，则根据蛇的反响判断是否吃到食物，并且将蛇的最后一个元素换到首部；
+		if (eat) {
+			if ((co==40&&r[0].x==eat.x&&r[0].y+1==eat.y)||
+			 (co==38&&r[0].x==eat.x&&r[0].y-1==eat.y)||
+			 (co==37&&r[0].x-1==eat.x&&r[0].y==eat.y) ||
+			 (co==39&&r[0].x+1==eat.x&&r[0].y==eat.y)) {
+
+			 	r.unshift(eat);
+			    eat=null;
+
+			}
+		}
+		// 将数组中最后一个元素换到首部；
+		r.unshift(r.pop());
+		// 根据方向，重新设定蛇数组的值
+		switch(co){
+			case 37:
+			    r[0].x=r[1].x-1;
+			    r[0].y=r[1].y;
+			    break;
+			case 38:
+			    r[0].x=r[1].x;
+			    r[0].y=r[1].y-1;
+			    break;
+			case 39:
+			    r[0].x=r[1].x+1;
+			    r[0].y=r[1].y;
+			    break;
+			case 40:
+				r[0].x=r[1].x;
+			    r[0].y=r[1].y+1;
+		    break;
+		}
+		
+		ctx.clearRect(0,0,500,500);
+		for(var i=0;i<r.length;i++){	
+		ctx.fillRect(r[i].x*10,r[i].y*10,10,10);
+		}
+		// 如果没有食物生成食物
+		if(eat==null){
+			// 随机数，随机取整
+			eat={y:(Math.random()*50>>>0),x:(Math.random()*50>>>0)};
+		}
+		if(eat){
+		ctx.fillRect(eat.x*10,eat.y*10,10,10);
+
+		}
+
+		if (r[0].x<0||r[0].x>=50||r[0].y<0||r[0].y>=50) {
+			alert("游戏结束得了"+(r.length-2)+"分")
+
+			
+		}
+	}
+	setInterval(onframe,100);
+	// 加入键盘事件，用来控制蛇的前进
+	// 每一个我们的键盘对应一个值
+	document.onkeyup=function(event){
+		var e=e||event;
+		var a=e.keyCode;
+		if(a>=37&&a<=40&&Math.abs(a-co)!=2){
+			co=a;
+		}else if(a=32) {
+			stop=!stop;
+
+		}
+
+		// console.log(a)
+
+	}
+	setInterval(function(){
+		box.innerText=""+(r.length-2)+"分"
+	},100)
+	
+			
+
+	
+</script>
+</html>
